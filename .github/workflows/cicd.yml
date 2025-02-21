@@ -24,14 +24,14 @@ jobs:
           npm install
           npm test
           npm run build --if-present
+          rm -rf node_modules
 
       - name : Upload Artifact
         uses: actions/upload-artifact@v4
         with:
             name: latest-artifact
             path: |
-              *
-              !node_modules
+              .
     
       - name : Download Artifact
         uses: actions/download-artifact@v4

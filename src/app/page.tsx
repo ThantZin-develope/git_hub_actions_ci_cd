@@ -4,6 +4,6 @@
 export default function Page (){
 
   return(
-    <h1>Hbwerbwerwber</h1>
+    <h1>Make Changes</h1>
   )
 }
