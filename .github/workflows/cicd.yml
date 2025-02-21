@@ -60,4 +60,5 @@ jobs:
                 source ~/.nvm/nvm.sh
                 cd ~/git_hub_actions_ci_cd
                 npm install
-                npm run start     
+                fuser -n tcp -k 3000
+                nohup npm run start &
