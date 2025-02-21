@@ -1,1 +1,36 @@
 
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  simple-cicd:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Deploy to AWS EC2
+        env:
+          EC2_INSTANCE_IP: ${{ secrets.EC2_INSTANCE_IP }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+        run: |
+          echo "$SSH_KEY" > key.pem
+          chmod 600 key.pem
+          scp -o StrictHostKeyChecking=no -i key.pem -r ./* ec2-user@$EC2_INSTANCE_IP:
+          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@$EC2_INSTANCE_IP "cd git_hub_actions_ci_cd && npm install && npm run start"
