@@ -32,5 +32,5 @@ jobs:
         run: |
           echo "$SSH_KEY" > key.pem
           chmod 600 key.pem
-          scp -o StrictHostKeyChecking=no -i key.pem -r ./* --exclude="key.pem" ubuntu@$EC2_INSTANCE_IP:/git_hub_actions_ci_cd
-          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@$EC2_INSTANCE_IP "cd git_hub_actions_ci_cd && npm install && npm run start"
+          scp -o StrictHostKeyChecking=no -i key.pem -r ./* --exclude="key.pem" ubuntu@$EC2_INSTANCE_IP:~/git_hub_actions_ci_cd
+          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@$EC2_INSTANCE_IP "cd ~/git_hub_actions_ci_cd && npm install && npm run start"
