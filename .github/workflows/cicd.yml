@@ -48,7 +48,7 @@ jobs:
             source: ./
             target: ~/git_hub_actions_ci_cd
 
-      - name: multiple command
+      - name: Start Web App
         uses: appleboy/ssh-action@v1.2.1
         with:
             host: ${{ secrets.EC2_INSTANCE_IP }}
@@ -56,6 +56,8 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             port: 22
             script: |
-                cd git_hub_actions_ci_cd
+                export NVM_DIR=~/.nvm
+                source ~/.nvm/nvm.sh
+                cd ~/git_hub_actions_ci_cd
                 npm install
                 npm run start     
