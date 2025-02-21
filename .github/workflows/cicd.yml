@@ -61,4 +61,4 @@ jobs:
                 cd ~/git_hub_actions_ci_cd
                 npm install
                 fuser -n tcp -k 3000
-                nohup npm run start &
+                nohup npm run start > app.log 2>&1 &
