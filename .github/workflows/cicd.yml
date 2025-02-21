@@ -19,29 +19,43 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build the project
-        run: npm run build
-
-      - name : Copy Changed Files  
-        env:
-          EC2_INSTANCE_IP: ${{ secrets.EC2_INSTANCE_IP }}
-          SSH_KEY: ${{ secrets.SSH_KEY }}
+      - name: Install Test and Build
         run: |
-          echo "$SSH_KEY" > key.pem
-          chmod 600 key.pem
-          rsync -avz --exclude="key.pem" -e "ssh -i key.pem -o StrictHostKeyChecking=no" ./* ubuntu@$EC2_INSTANCE_IP:~/git_hub_actions_ci_cd
-          
-      - name: Deploy
+          npm install
+          npm test
+          npm run build --if-present
+
+      - name : Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+            name: latest-artifact
+            path: |
+              *
+              !node_modules
+    
+      - name : Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+            name: latest-artifact
+    
+      - name: Copy to the remote server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+            host: ${{ secrets.EC2_INSTANCE_IP }}
+            username: ubuntu
+            key: ${{ secrets.SSH_KEY }}
+            port: 22
+            source: ./
+            target: ~/git_hub_actions_ci_cd
+
+      - name: multiple command
         uses: appleboy/ssh-action@v1.2.1
         with:
-          host: ${{ secrets.EC2_INSTANCE_IP }}
-          username: ubuntu
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          script: |
-            cd ~/git_hub_actions_ci_cd
-            npm install
-            npm run start
+            host: ${{ secrets.EC2_INSTANCE_IP }}
+            username: ubuntu
+            key: ${{ secrets.SSH_KEY }}
+            port: 22
+            script: |
+                cd git_hub_actions_ci_cd
+                npm install
+                npm run start     
